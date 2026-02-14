@@ -1,12 +1,33 @@
 {
   "name": "machamacha-api",
+  "type": "module",
   "scripts": {
-    "dev": "bun run --hot src/index.ts"
+    "dev": "bun run --hot src/index.ts",
+    "start": "bun run src/index.ts",
+    "build": "bun install && bun db:gen",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:migrate": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:gen": "prisma generate",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio --browser none",
+    "db:reset": "prisma migrate reset"
   },
   "dependencies": {
-    "hono": "^4.11.9"
+    "@hono/zod-openapi": "^1.2.1",
+    "@prisma/adapter-pg": "^7.4.0",
+    "@prisma/client": "^7.4.0",
+    "@scalar/hono-api-reference": "^0.9.40",
+    "dotenv": "^17.3.1",
+    "hono": "^4.11.9",
+    "pg": "^8.18.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/node": "^25.2.3",
+    "@types/pg": "^8.16.0",
+    "prisma": "^7.4.0"
   }
 }
