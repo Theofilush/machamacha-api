@@ -1,6 +1,6 @@
 services:
   backend:
-    image: harry-potter-api
+    image: machamacha-api
     build:
       context: .
     ports:
