@@ -23,6 +23,57 @@ model Product {
   category    String
   stock       Int      @default(0)
   tags        String[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+
+  cartItems CartItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id       String    @id @default(ulid())
+  email    String    @unique
+  password Password?
+
+  carts Cart[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Password {
+  id   String @id @default(ulid())
+  hash String
+
+  user   User   @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  userId String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Cart {
+  id String @id @default(ulid())
+
+  items CartItem[]
+
+  user   User   @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CartItem {
+  id       String @id @default(ulid())
+  quantity Int
+
+  product   Product @relation(fields: [productId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  productId String
+
+  cart   Cart   @relation(fields: [cartId], references: [id])
+  cartId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
