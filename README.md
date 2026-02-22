@@ -81,6 +81,6 @@ Make sure the `DATABASE_URL` is configured in `.env` file for usage with Docker 
 If we need to build the Docker image:
 
 ```sh
-bun docker:build
+bun db:build
 # docker compose up -d --build
 ```
