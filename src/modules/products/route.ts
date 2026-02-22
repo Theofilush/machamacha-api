@@ -15,17 +15,12 @@ productRoute.openapi(
     tags,
     responses: {
       200: { description: "Retrieve all products", content: { "application/json": { schema: ProductsSchema } } },
-      404: { description: "No products found", content: { "application/json": { schema: ErrorSchema, example: { error: "No products found" } } } },
       500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
     },
   }),
   async (c) => {
     try {
       const allProducts = await prisma.product.findMany();
-
-      if (!allProducts || allProducts.length === 0) {
-        return c.json({ error: "No products found" }, 404);
-      }
 
       return c.json(allProducts, 200);
     } catch (err) {
@@ -46,18 +41,13 @@ productRoute.openapi(
     },
     responses: {
       200: { description: "Retrieve a Product by slug", content: { "application/json": { schema: ProductSchema, example: exampleResponseGetBySlug } } },
-      400: { description: "Invalid slug parameter", content: { "application/json": { schema: ErrorSchema, example: { error: "Invalid slug parameter" } } } },
       404: { description: "Product not found", content: { "application/json": { schema: ErrorSchema, example: { error: "Product not found" } } } },
       500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
     },
   }),
   async (c) => {
     try {
-      const slug = c.req.param("slug");
-
-      if (!slug || slug.trim() === "") {
-        return c.json({ error: "Invalid slug parameter" }, 400);
-      }
+      const { slug } = c.req.valid("param");
 
       const product = await prisma.product.findUnique({
         where: { slug },
@@ -69,8 +59,8 @@ productRoute.openapi(
 
       return c.json(product, 200);
     } catch (err) {
-      console.error("Error fetching product:", err);
-      return c.json({ error: "Internal server error" }, 500);
+      console.error("Error get product by slug:", err);
+      return c.json({ error: "Failed to get product by slug" }, 500);
     }
   },
 );

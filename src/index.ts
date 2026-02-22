@@ -29,8 +29,12 @@ app.doc("/openapi.json", {
   },
   servers: [
     {
+      url: "https://machamacha-api.namakita.com",
+      description: "Main production server",
+    },
+    {
       url: "https://machamacha.up.railway.app",
-      description: "Production server",
+      description: "Railway production server",
     },
     {
       url: "http://localhost:3000",
