@@ -25,7 +25,7 @@ productRoute.openapi(
       return c.json(allProducts, 200);
     } catch (err) {
       console.error(err);
-      return c.json({ error: "Internal server error" }, 500);
+      return c.json({ error: "Failed to get products" }, 500);
     }
   },
 );
