@@ -65,7 +65,8 @@ model Cart {
 }
 
 model CartItem {
-  id       String @id @default(ulid())
+  id String @id @default(ulid())
+
   quantity Int
 
   product   Product @relation(fields: [productId], references: [id], onUpdate: Cascade, onDelete: Cascade)

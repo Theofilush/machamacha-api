@@ -1,9 +1,13 @@
 import { prisma } from "../../lib/prisma";
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
-import { ErrorSchema, ProductSchema, ProductSlugParamSchema, ProductsSchema } from "./schema";
-import { exampleResponseGetBySlug } from "./data";
+import {
+  ErrorSchema,
+  ProductSchema,
+  ProductSlugParamSchema,
+  ProductsSchema,
+} from "./schema";
 
-const tags = ["/products"];
+const tags = ["products"];
 
 export const productRoute = new OpenAPIHono();
 
@@ -14,8 +18,19 @@ productRoute.openapi(
     path: "/",
     tags,
     responses: {
-      200: { description: "Retrieve all products", content: { "application/json": { schema: ProductsSchema } } },
-      500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
+      200: {
+        description: "Retrieve all products",
+        content: { "application/json": { schema: ProductsSchema } },
+      },
+      500: {
+        description: "Internal server error",
+        content: {
+          "application/json": {
+            schema: ErrorSchema,
+            example: { error: "Internal server error" },
+          },
+        },
+      },
     },
   }),
   async (c) => {
@@ -40,9 +55,43 @@ productRoute.openapi(
       params: ProductSlugParamSchema,
     },
     responses: {
-      200: { description: "Retrieve a Product by slug", content: { "application/json": { schema: ProductSchema, example: exampleResponseGetBySlug } } },
-      404: { description: "Product not found", content: { "application/json": { schema: ErrorSchema, example: { error: "Product not found" } } } },
-      500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
+      200: {
+        description: "Retrieve a Product by slug",
+        content: {
+          "application/json": {
+            schema: ProductSchema,
+            example: {
+              name: "Premium Matcha Latte",
+              slug: "premium-matcha-latte",
+              price: 75000,
+              imageUrl: "/images/products/premium-matcha-latte.jpg",
+              description:
+                "A smooth and vibrant Japanese matcha latte blend, crafted for a rich umami taste with natural sweetness. Perfect for daily energy and focus.",
+              category: "matcha",
+              stock: 120,
+              tags: ["matcha", "latte", "premium", "healthy", "instant"],
+            },
+          },
+        },
+      },
+      404: {
+        description: "Product not found",
+        content: {
+          "application/json": {
+            schema: ErrorSchema,
+            example: { error: "Product not found" },
+          },
+        },
+      },
+      500: {
+        description: "Internal server error",
+        content: {
+          "application/json": {
+            schema: ErrorSchema,
+            example: { error: "Internal server error" },
+          },
+        },
+      },
     },
   }),
   async (c) => {

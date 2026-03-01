@@ -27,20 +27,6 @@ app.doc("/openapi.json", {
       url: "https://opensource.org/licenses/MIT",
     },
   },
-  servers: [
-    {
-      url: "https://machamacha-api.namakita.com",
-      description: "Main production server",
-    },
-    {
-      url: "https://machamacha.up.railway.app",
-      description: "Railway production server",
-    },
-    {
-      url: "http://localhost:3000",
-      description: "Local development server",
-    },
-  ],
 });
 
 app.get("/", Scalar({ url: "/openapi.json" }));

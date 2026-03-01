@@ -1,83 +1,59 @@
-import { Products } from "./schema";
+import { SeedProducts } from "./schema";
 
-export const dataProducts: Products = [
+export const dataProducts: SeedProducts = [
   {
-    id: "prod-001",
     name: "Premium Matcha Latte",
     slug: "premium-matcha-latte",
     price: 75000,
-    imageUrl: "/images/products/premium-matcha-latte.jpg",
-    description: "A smooth and vibrant Japanese matcha latte blend, crafted for a rich umami taste with natural sweetness. Perfect for daily energy and focus.",
+    imageUrl: "https://example.com/images/products/premium-matcha-latte.jpg",
+    description:
+      "A smooth and vibrant Japanese matcha latte blend, crafted for a rich umami taste with natural sweetness. Perfect for daily energy and focus.",
     category: "matcha",
     stock: 120,
     tags: ["matcha", "latte", "premium", "healthy", "instant"],
-    createdAt: new Date("2026-02-14T18:00:00Z"),
-    updatedAt: new Date("2026-02-14T18:00:00Z"),
   },
   {
-    id: "prod-002",
     name: "Roasted Hojicha Latte",
     slug: "roasted-hojicha-latte",
     price: 70000,
-    imageUrl: "/images/products/roasted-hojicha-latte.jpg",
-    description: "Made from roasted Japanese green tea leaves, this hojicha latte offers a nutty, earthy flavor with low caffeine—ideal for evening relaxation.",
+    imageUrl: "https://example.com/images/products/roasted-hojicha-latte.jpg",
+    description:
+      "Made from roasted Japanese green tea leaves, this hojicha latte offers a nutty, earthy flavor with low caffeine—ideal for evening relaxation.",
     category: "tea",
     stock: 85,
     tags: ["hojicha", "latte", "roasted", "natural"],
-    createdAt: new Date("2026-02-14T18:00:00Z"),
-    updatedAt: new Date("2026-02-14T18:00:00Z"),
   },
   {
-    id: "prod-003",
     name: "Sakura Latte",
     slug: "sakura-latte",
     price: 80000,
-    imageUrl: "/images/products/sakura-latte.jpg",
-    description: "A delicate blend inspired by Japanese cherry blossoms, combining floral notes with creamy latte texture for a refreshing, elegant drink.",
+    imageUrl: "https://example.com/images/products/sakura-latte.jpg",
+    description:
+      "A delicate blend inspired by Japanese cherry blossoms, combining floral notes with creamy latte texture for a refreshing, elegant drink.",
     category: "latte",
     stock: 60,
     tags: ["sakura", "latte", "floral", "seasonal"],
-    createdAt: new Date("2026-02-14T18:00:00Z"),
-    updatedAt: new Date("2026-02-14T18:00:00Z"),
   },
   {
-    id: "prod-004",
     name: "Taro Latte",
     slug: "taro-latte",
     price: 65000,
-    imageUrl: "/images/products/taro-latte.jpg",
-    description: "A sweet and creamy taro latte powder, naturally purple and packed with comforting flavor. A fun twist on traditional tea lattes.",
+    imageUrl: "https://example.com/images/products/taro-latte.jpg",
+    description:
+      "A sweet and creamy taro latte powder, naturally purple and packed with comforting flavor. A fun twist on traditional tea lattes.",
     category: "latte",
     stock: 100,
     tags: ["taro", "latte", "sweet", "colorful"],
-    createdAt: new Date("2026-02-14T18:00:00Z"),
-    updatedAt: new Date("2026-02-14T18:00:00Z"),
   },
   {
-    id: "prod-005",
     name: "Red Velvet Latte",
     slug: "red-velvet-latte",
     price: 75000,
-    imageUrl: "/images/products/red-velvet-latte.jpg",
-    description: "A bold and indulgent red velvet latte blend, combining cocoa richness with smooth creaminess. Perfect for dessert lovers.",
+    imageUrl: "https://example.com/images/products/red-velvet-latte.jpg",
+    description:
+      "A bold and indulgent red velvet latte blend, combining cocoa richness with smooth creaminess. Perfect for dessert lovers.",
     category: "latte",
     stock: 95,
     tags: ["red velvet", "latte", "dessert", "indulgent"],
-    createdAt: new Date("2026-02-14T18:00:00Z"),
-    updatedAt: new Date("2026-02-14T18:00:00Z"),
   },
 ];
-
-export const exampleResponseGetBySlug = {
-  id: "prod-001",
-  name: "Premium Matcha Latte",
-  slug: "premium-matcha-latte",
-  price: 75000,
-  imageUrl: "/images/products/premium-matcha-latte.jpg",
-  description: "A smooth and vibrant Japanese matcha latte blend, crafted for a rich umami taste with natural sweetness. Perfect for daily energy and focus.",
-  category: "matcha",
-  stock: 120,
-  tags: ["matcha", "latte", "premium", "healthy", "instant"],
-  createdAt: new Date("2026-02-14T18:00:00Z"),
-  updatedAt: new Date("2026-02-14T18:00:00Z"),
-};
