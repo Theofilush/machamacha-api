@@ -1,8 +1,7 @@
-import { Products } from "./schema";
+import { SeedProducts } from "./schema";
 
-export const dataProducts: Products = [
+export const dataProducts: SeedProducts = [
   {
-    id: "prod-001",
     name: "Premium Matcha Latte",
     slug: "premium-matcha-latte",
     price: 75000,
@@ -11,11 +10,8 @@ export const dataProducts: Products = [
     category: "matcha",
     stock: 120,
     tags: ["matcha", "latte", "premium", "healthy", "instant"],
-    createdAt: new Date("2026-02-14T18:00:00Z"),
-    updatedAt: new Date("2026-02-14T18:00:00Z"),
   },
   {
-    id: "prod-002",
     name: "Roasted Hojicha Latte",
     slug: "roasted-hojicha-latte",
     price: 70000,
@@ -24,11 +20,8 @@ export const dataProducts: Products = [
     category: "tea",
     stock: 85,
     tags: ["hojicha", "latte", "roasted", "natural"],
-    createdAt: new Date("2026-02-14T18:00:00Z"),
-    updatedAt: new Date("2026-02-14T18:00:00Z"),
   },
   {
-    id: "prod-003",
     name: "Sakura Latte",
     slug: "sakura-latte",
     price: 80000,
@@ -37,11 +30,8 @@ export const dataProducts: Products = [
     category: "latte",
     stock: 60,
     tags: ["sakura", "latte", "floral", "seasonal"],
-    createdAt: new Date("2026-02-14T18:00:00Z"),
-    updatedAt: new Date("2026-02-14T18:00:00Z"),
   },
   {
-    id: "prod-004",
     name: "Taro Latte",
     slug: "taro-latte",
     price: 65000,
@@ -50,11 +40,8 @@ export const dataProducts: Products = [
     category: "latte",
     stock: 100,
     tags: ["taro", "latte", "sweet", "colorful"],
-    createdAt: new Date("2026-02-14T18:00:00Z"),
-    updatedAt: new Date("2026-02-14T18:00:00Z"),
   },
   {
-    id: "prod-005",
     name: "Red Velvet Latte",
     slug: "red-velvet-latte",
     price: 75000,
@@ -63,21 +50,5 @@ export const dataProducts: Products = [
     category: "latte",
     stock: 95,
     tags: ["red velvet", "latte", "dessert", "indulgent"],
-    createdAt: new Date("2026-02-14T18:00:00Z"),
-    updatedAt: new Date("2026-02-14T18:00:00Z"),
   },
 ];
-
-export const exampleResponseGetBySlug = {
-  id: "prod-001",
-  name: "Premium Matcha Latte",
-  slug: "premium-matcha-latte",
-  price: 75000,
-  imageUrl: "/images/products/premium-matcha-latte.jpg",
-  description: "A smooth and vibrant Japanese matcha latte blend, crafted for a rich umami taste with natural sweetness. Perfect for daily energy and focus.",
-  category: "matcha",
-  stock: 120,
-  tags: ["matcha", "latte", "premium", "healthy", "instant"],
-  createdAt: new Date("2026-02-14T18:00:00Z"),
-  updatedAt: new Date("2026-02-14T18:00:00Z"),
-};

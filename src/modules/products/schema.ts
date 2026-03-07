@@ -5,7 +5,7 @@ export const ProductSchema = z.object({
   name: z.string().min(1).openapi({ example: "Premium Matcha Latte" }),
   slug: z.string().openapi({ example: "premium-matcha-latte" }),
   price: z.number().nonnegative().openapi({ example: 75000, description: "Price in IDR" }),
-  imageUrl: z.string().url().openapi({ example: "https://cdn.machamacha.com/products/matcha-latte.jpg" }),
+  imageUrl: z.url().openapi({ example: "https://cdn.machamacha.com/products/matcha-latte.jpg" }),
   description: z.string().min(10).openapi({ example: "A smooth and vibrant Japanese matcha latte blend." }),
   category: z.string().openapi({ example: "matcha" }),
   stock: z.number().int().nonnegative().openapi({ example: 120 }),
@@ -15,6 +15,12 @@ export const ProductSchema = z.object({
     .openapi({ example: ["matcha", "latte", "premium"] }),
   createdAt: z.date().openapi({ example: "2026-02-14T18:00:00Z" }),
   updatedAt: z.date().openapi({ example: "2026-02-14T18:00:00Z" }),
+});
+
+export const SeedProductSchema = ProductSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
 export const ProductSlugParamSchema = z.object({
@@ -31,7 +37,10 @@ export const ProductSlugParamSchema = z.object({
 export const ErrorSchema = z.object({ error: z.string() });
 export const SuccessSchema = z.object({ message: z.string() });
 
+export const SeedProductsSchema = SeedProductSchema.array();
 export const ProductsSchema = z.array(ProductSchema);
 
-export type product = z.infer<typeof ProductSchema>;
+export type Product = z.infer<typeof ProductSchema>;
 export type Products = z.infer<typeof ProductsSchema>;
+export type SeedProduct = z.infer<typeof SeedProductSchema>;
+export type SeedProducts = z.infer<typeof SeedProductsSchema>;

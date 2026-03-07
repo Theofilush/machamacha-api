@@ -1,12 +1,14 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { Scalar } from "@scalar/hono-api-reference";
 import { Hono } from "hono";
+import { cors } from "hono/cors"; 
 
 import { logger } from "hono/logger";
 import { productRoute } from "./modules/products/route";
 
 const app = new OpenAPIHono();
 
+app.use(cors());
 app.use(logger());
 app.route("/products", productRoute);
 
@@ -29,17 +31,18 @@ app.doc("/openapi.json", {
   },
   servers: [
     {
-      url: "https://machamacha-api.namakita.com",
+      url: "http://localhost:3000",
+      description: "Local development server",
+    },
+    {
+      url: "https://machamacha-api.tfhandoyo.com",
       description: "Main production server",
     },
     {
       url: "https://machamacha.up.railway.app",
       description: "Railway production server",
     },
-    {
-      url: "http://localhost:3000",
-      description: "Local development server",
-    },
+   
   ],
 });
 
