@@ -1,7 +1,7 @@
 import { z } from "@hono/zod-openapi";
 
 export const ProductSchema = z.object({
-  id: z.string().openapi({ example: "prod-001", description: "Unique product ID" }),
+  id: z.string().openapi({ example: "01ARZ3NDEKTSV4RRFFQ69G5FAV", description: "Unique product ID" }),
   name: z.string().min(1).openapi({ example: "Premium Matcha Latte" }),
   slug: z.string().openapi({ example: "premium-matcha-latte" }),
   price: z.number().nonnegative().openapi({ example: 75000, description: "Price in IDR" }),
@@ -32,6 +32,40 @@ export const ProductSlugParamSchema = z.object({
       description: "Unique slug identifier of the product",
       example: "premium-matcha-latte",
     }),
+});
+
+export const ProductIdParamSchema = z.object({
+  id: z
+    .string()
+    .min(26)
+    .max(26)
+    .openapi({
+      param: { name: "id", in: "path" },
+      description: "Unique ULID of the character",
+      example: "clabcdef1234567890ghijklmn",
+    }),
+});
+
+export const ProductCreateSchema = z.object({
+  name: z.string().min(1),
+  slug: z.string().optional(),
+  price: z.number().int().nonnegative(),
+  imageUrl: z.url(),
+  description: z.string().min(10),
+  category: z.string(),
+  stock: z.number().int().nonnegative(),
+  tags: z.array(z.string()).default([]),
+});
+
+export const ProductUpdateSchema = z.object({
+  name: z.string().min(1),
+  slug: z.string().optional(),
+  price: z.number().min(0),
+  imageUrl: z.url().optional(),
+  description: z.string().optional(),
+  category: z.string().optional(),
+  stock: z.number().int().nonnegative().optional(),
+  tags: z.array(z.string()).optional(),
 });
 
 export const ErrorSchema = z.object({ error: z.string() });
