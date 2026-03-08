@@ -8,6 +8,14 @@ const tags = ["products"];
 
 export const productRoute = new OpenAPIHono();
 
+function generateSlug(body: { slug?: string; name: string }) {
+  body.slug = slugify(body.slug ? body.slug : body.name, {
+    lower: true,
+    strict: true,
+  });
+  return body.slug;
+}
+
 // GET /products
 productRoute.openapi(
   createRoute({
@@ -116,10 +124,12 @@ productRoute.openapi(
     try {
       const body = c.req.valid("json");
 
+      body.slug = slugify(body.slug ? body.slug : body.name, { lower: true, strict: true });
+
       const newProduct = await prisma.product.create({
         data: {
           name: body.name,
-          slug: slugify(body.name),
+          slug: body.slug,
           price: body.price,
           imageUrl: body.imageUrl,
           description: body.description,
@@ -163,13 +173,11 @@ productRoute.openapi(
       const { id } = c.req.valid("param");
       const body = c.req.valid("json");
 
-      const slug = body.slug ? slugify(body.slug, { lower: true, strict: true }) : slugify(body.name, { lower: true, strict: true });
-
       const updatedProduct = await prisma.product.update({
         where: { id },
         data: {
           name: body.name,
-          slug,
+          slug: body.slug,
           price: body.price,
           imageUrl: body.imageUrl,
           description: body.description,
