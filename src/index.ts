@@ -1,16 +1,19 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { Scalar } from "@scalar/hono-api-reference";
 import { Hono } from "hono";
-import { cors } from "hono/cors"; 
+import { cors } from "hono/cors";
 
 import { logger } from "hono/logger";
 import { productRoute } from "./modules/products/route";
+import { userRoute } from "./modules/users/route";
 
 const app = new OpenAPIHono();
 
 app.use(cors());
 app.use(logger());
 app.route("/products", productRoute);
+
+app.route("/users", userRoute);
 
 app.doc("/openapi.json", {
   openapi: "3.0.4",
@@ -42,7 +45,6 @@ app.doc("/openapi.json", {
       url: "https://machamacha.up.railway.app",
       description: "Railway production server",
     },
-   
   ],
 });
 
