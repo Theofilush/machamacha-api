@@ -2,21 +2,11 @@ import { prisma } from "../../lib/prisma";
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { ErrorSchema, ProductCreateSchema, ProductIdParamSchema, ProductSchema, ProductSlugParamSchema, ProductsSchema, ProductUpdateSchema, SuccessSchema } from "./schema";
 import { exampleRequestCreateProduct, exampleRequestUpdateProduct, exampleResponseCreateProduct, exampleResponseGetBySlug, exampleResponseUpdateProduct } from "./openAPI-data-transfer-objects";
-import slugify from "slugify";
+import { generateSlug } from "../../lib/util";
 
 const tags = ["products"];
 
 export const productRoute = new OpenAPIHono();
-
-function generateSlug(body: { slug?: string; name: string }) {
-  body.slug = slugify(body.slug ? body.slug : body.name, {
-    lower: true,
-    strict: true,
-    trim: true,
-    remove: /[*+~.()"!:@]/g,
-  });
-  return body.slug;
-}
 
 // GET /products
 productRoute.openapi(
@@ -126,7 +116,7 @@ productRoute.openapi(
     try {
       const body = c.req.valid("json");
 
-      body.slug = slugify(body.slug ? body.slug : body.name, { lower: true, strict: true });
+      body.slug = generateSlug(body);
 
       const newProduct = await prisma.product.create({
         data: {
