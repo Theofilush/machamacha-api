@@ -7,6 +7,7 @@ import { logger } from "hono/logger";
 import { productRoute } from "./modules/products/route";
 import { userRoute } from "./modules/users/route";
 import { authRoute } from "./modules/authentication/route";
+import { cartRoute } from "./modules/carts/route";
 
 const app = new OpenAPIHono();
 
@@ -16,6 +17,7 @@ app.route("/products", productRoute);
 
 app.route("/users", userRoute);
 app.route("/auth", authRoute);
+app.route("/carts", cartRoute);
 
 app.doc("/openapi.json", {
   openapi: "3.0.4",
