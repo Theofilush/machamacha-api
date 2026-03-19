@@ -1,7 +1,7 @@
 import { prisma } from "../../lib/prisma";
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { ErrorSchema, ProductCreateSchema, ProductIdParamSchema, ProductSchema, ProductSlugParamSchema, ProductsSchema, ProductUpdateSchema, SuccessSchema } from "./schema";
-import { exampleRequestCreateProduct, exampleRequestUpdateProduct, exampleResponseCreateProduct, exampleResponseGetBySlug, exampleResponseUpdateProduct } from "./openAPI-data-transfer-objects";
+import { exampleRequestCreateProduct, exampleRequestUpdateProduct, exampleResponseCreateProduct, exampleResponseGetBySlug, exampleResponseUpdateProduct } from "./payload-example";
 import { generateSlug } from "../../lib/util";
 
 const tags = ["products"];

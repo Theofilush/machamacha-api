@@ -3,7 +3,7 @@ export const exampleResponseGetBySlug = {
   name: "Premium Matcha Latte",
   slug: "premium-matcha-latte",
   price: 75000,
-  imageUrl: "/images/products/premium-matcha-latte.jpg",
+  imageUrl: "https://example.com/images/products/premium-matcha-latte.jpg",
   description: "A smooth and vibrant Japanese matcha latte blend, crafted for a rich umami taste with natural sweetness. Perfect for daily energy and focus.",
   category: "matcha",
   stock: 120,
