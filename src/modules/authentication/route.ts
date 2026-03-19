@@ -9,10 +9,19 @@ const tags = ["authentication"];
 
 export const authRoute = new OpenAPIHono();
 
-export async function signJWT(payload: Record<string, unknown>) {
-  return await sign(payload, process.env.JWT_SECRET!, "HS256");
+export async function signJWT(payload: object) {
+  return await sign(
+    {
+      ...payload,
+      issuedAt: Math.floor(Date.now() / 1000),
+      jwtUniqueId: crypto.randomUUID(),
+    },
+    process.env.JWT_SECRET!,
+    "HS256",
+  );
 }
 
+// POST /auth/login
 authRoute.openapi(
   createRoute({
     method: "post",
@@ -42,6 +51,7 @@ authRoute.openapi(
       if (!isValid) {
         return c.json({ error: "Invalid email or password" }, 401);
       }
+
       const token = await signJWT({ userId: user.id, email: user.email });
       const refreshToken = await signJWT({ userId: user.id });
 
@@ -49,7 +59,7 @@ authRoute.openapi(
         where: { userId: user.id },
         update: {
           token: refreshToken,
-          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         },
         create: {
           token: refreshToken,
@@ -58,14 +68,7 @@ authRoute.openapi(
         },
       });
 
-      return c.json(
-        {
-          token,
-          refreshToken,
-          user: { id: user.id, email: user.email },
-        },
-        200,
-      );
+      return c.json({ token, refreshToken, user: { id: user.id, email: user.email } }, 200);
     } catch (err) {
       console.error("Error login:", err);
       return c.json({ error: "Internal server error" }, 500);
@@ -73,6 +76,7 @@ authRoute.openapi(
   },
 );
 
+// POST /auth/register
 authRoute.openapi(
   createRoute({
     method: "post",
@@ -112,6 +116,7 @@ authRoute.openapi(
   },
 );
 
+// POST /auth/logout
 authRoute.openapi(
   createRoute({
     method: "post",
@@ -120,6 +125,7 @@ authRoute.openapi(
     responses: {
       200: { description: "Logout successful", content: { "application/json": { schema: LogoutResponseSchema, example: { message: "Logout successful" } } } },
       400: { description: "No token provided", content: { "application/json": { schema: ErrorSchema, example: { error: "No token provided" } } } },
+      401: { description: "Invalid or expired token", content: { "application/json": { schema: ErrorSchema, example: { error: "Invalid or expired token" } } } },
       500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
     },
   }),
@@ -130,15 +136,22 @@ authRoute.openapi(
         return c.json({ error: "No token provided" }, 400);
       }
 
-      const rawPayload = await verify(token, process.env.JWT_SECRET!, "HS256");
+      const isLoggedOut = await prisma.invalidToken.findUnique({ where: { token } });
+      if (isLoggedOut) {
+        return c.json({ message: "Already logged out" }, 200);
+      }
+      let rawPayload;
+      try {
+        rawPayload = await verify(token, process.env.JWT_SECRET!, "HS256");
+      } catch {
+        return c.json({ error: "Invalid or expired token" }, 401);
+      }
+
       const payload = JWTPayloadSchema.parse(rawPayload);
 
       await prisma.refreshToken.deleteMany({ where: { userId: payload.userId } });
-      await prisma.invalidToken.upsert({
-        where: { token },
-        update: {},
-        create: { token },
-      });
+
+      await prisma.invalidToken.create({ data: { token } });
 
       return c.json({ message: "Logout successful" }, 200);
     } catch (err) {
@@ -148,6 +161,7 @@ authRoute.openapi(
   },
 );
 
+// POST /auth/refresh-token
 authRoute.openapi(
   createRoute({
     method: "post",
