@@ -186,7 +186,7 @@ authRoute.openapi(
         return c.json({ error: "Invalid or expired refresh token" }, 401);
       }
 
-      const newAccessToken = await sign({ userId: stored.userId }, process.env.JWT_SECRET!, "HS256");
+      const newAccessToken = await signJWT({ userId: stored.userId });
 
       return c.json({ token: newAccessToken }, 200);
     } catch (err) {
