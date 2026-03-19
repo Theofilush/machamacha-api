@@ -40,11 +40,11 @@ model User {
   email    String    @unique
   password Password?
 
-  carts Cart[]
-
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @default(now()) @updatedAt
+  carts         Cart[]
   refreshTokens RefreshToken[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Password {
@@ -67,7 +67,7 @@ model InvalidToken {
 model RefreshToken {
   id        String   @id @default(ulid())
   token     String   @unique
-  userId    String
+  userId    String   @unique
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   expiresAt DateTime

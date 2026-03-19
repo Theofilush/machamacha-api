@@ -1,6 +1,6 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { prisma } from "../../lib/prisma";
-import { AuthResponseSchema, ErrorSchema, JWTPayloadSchema, LoginSchema, LogoutResponseSchema, RegisterSchema, UserResponseSchema } from "./schema";
+import { AuthResponseSchema, ErrorSchema, JWTPayloadSchema, LoginSchema, LogoutResponseSchema, RefreshRequestSchema, RefreshTokenResponseSchema, RegisterSchema, UserResponseSchema } from "./schema";
 import bcrypt from "bcryptjs";
 import { sign, verify } from "hono/jwt";
 import { exampleRequestRegister, exampleResponseLogin, exampleResponseRegister } from "./payload-example";
@@ -27,7 +27,7 @@ authRoute.openapi(
   }),
   async (c) => {
     try {
-      const { email, password } = c.req.valid("json");
+      const { email, password } = await c.req.valid("json");
 
       const user = await prisma.user.findUnique({
         where: { email },
@@ -35,20 +35,33 @@ authRoute.openapi(
       });
 
       if (!user || !user.password) {
-        return c.json({ error: "Invalid credentials" }, 401);
+        return c.json({ error: "Invalid email or password" }, 401);
       }
-      //   const testHash = await bcrypt.hash("secret123", 10);
-      //   console.log("New hash:", testHash);
 
       const isValid = await bcrypt.compare(password, user.password.hash);
       if (!isValid) {
-        return c.json({ error: "Invalid credentials" }, 401);
+        return c.json({ error: "Invalid email or password" }, 401);
       }
-
       const token = await signJWT({ userId: user.id, email: user.email });
+      const refreshToken = await signJWT({ userId: user.id });
+
+      await prisma.refreshToken.upsert({
+        where: { userId: user.id },
+        update: {
+          token: refreshToken,
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+        },
+        create: {
+          token: refreshToken,
+          userId: user.id,
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        },
+      });
+
       return c.json(
         {
           token,
+          refreshToken,
           user: { id: user.id, email: user.email },
         },
         200,
@@ -117,18 +130,53 @@ authRoute.openapi(
         return c.json({ error: "No token provided" }, 400);
       }
 
-      // masukkan token ke blacklist
-      await prisma.invalidToken.create({ data: { token } });
-
-      // hapus refresh token user
       const rawPayload = await verify(token, process.env.JWT_SECRET!, "HS256");
       const payload = JWTPayloadSchema.parse(rawPayload);
 
       await prisma.refreshToken.deleteMany({ where: { userId: payload.userId } });
+      await prisma.invalidToken.upsert({
+        where: { token },
+        update: {},
+        create: { token },
+      });
 
       return c.json({ message: "Logout successful" }, 200);
     } catch (err) {
       console.error("Error logout:", err);
+      return c.json({ error: "Internal server error" }, 500);
+    }
+  },
+);
+
+authRoute.openapi(
+  createRoute({
+    method: "post",
+    path: "/refresh-token",
+    tags,
+    request: { body: { content: { "application/json": { schema: RefreshRequestSchema, example: { refreshToken: "refresh.token.here" } } } } },
+    responses: {
+      200: { description: "New access token issued", content: { "application/json": { schema: RefreshTokenResponseSchema, example: { token: "new.jwt.token.here" } } } },
+      401: { description: "Invalid or expired refresh token", content: { "application/json": { schema: ErrorSchema, example: { error: "Invalid refresh token" } } } },
+      500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
+    },
+  }),
+  async (c) => {
+    try {
+      const { refreshToken } = await c.req.valid("json");
+
+      const stored = await prisma.refreshToken.findUnique({
+        where: { token: refreshToken },
+      });
+
+      if (!stored || stored.expiresAt < new Date()) {
+        return c.json({ error: "Invalid or expired refresh token" }, 401);
+      }
+
+      const newAccessToken = await sign({ userId: stored.userId }, process.env.JWT_SECRET!, "HS256");
+
+      return c.json({ token: newAccessToken }, 200);
+    } catch (err) {
+      console.error("Error refresh:", err);
       return c.json({ error: "Internal server error" }, 500);
     }
   },
