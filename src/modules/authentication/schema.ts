@@ -23,5 +23,24 @@ export const AuthResponseSchema = z.object({
   }),
 });
 
+export const RefreshTokenSchema = z.object({
+  refreshToken: z.string(),
+});
+
+export const RefreshTokenResponseSchema = z.object({
+  token: z.string(),
+  refreshToken: z.string(),
+});
+
+export const LogoutResponseSchema = z.object({ message: z.string() });
 export const ErrorSchema = z.object({ error: z.string() });
 export const SuccessSchema = z.object({ message: z.string() });
+
+export const JWTPayloadSchema = z.object({
+  userId: z.string(),
+  email: z.string().email(),
+});
+
+export const RefreshRequestSchema = z.object({
+  refreshToken: z.string(),
+});

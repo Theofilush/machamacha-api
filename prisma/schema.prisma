@@ -42,8 +42,9 @@ model User {
 
   carts Cart[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now()) @updatedAt
+  refreshTokens RefreshToken[]
 }
 
 model Password {
@@ -55,6 +56,21 @@ model Password {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+}
+
+model InvalidToken {
+  id        String   @id @default(ulid())
+  token     String   @unique
+  createdAt DateTime @default(now())
+}
+
+model RefreshToken {
+  id        String   @id @default(ulid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  expiresAt DateTime
 }
 
 model Cart {

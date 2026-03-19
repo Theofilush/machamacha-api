@@ -1,8 +1,8 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { prisma } from "../../lib/prisma";
-import { AuthResponseSchema, ErrorSchema, LoginSchema, RegisterSchema, UserResponseSchema } from "./schema";
+import { AuthResponseSchema, ErrorSchema, JWTPayloadSchema, LoginSchema, LogoutResponseSchema, RegisterSchema, UserResponseSchema } from "./schema";
 import bcrypt from "bcryptjs";
-import { sign } from "hono/jwt";
+import { sign, verify } from "hono/jwt";
 import { exampleRequestRegister, exampleResponseLogin, exampleResponseRegister } from "./payload-example";
 
 const tags = ["authentication"];
@@ -94,6 +94,41 @@ authRoute.openapi(
       return c.json({ id: newUser.id, email: newUser.email }, 201);
     } catch (err) {
       console.error("Error register:", err);
+      return c.json({ error: "Internal server error" }, 500);
+    }
+  },
+);
+
+authRoute.openapi(
+  createRoute({
+    method: "post",
+    path: "/logout",
+    tags,
+    responses: {
+      200: { description: "Logout successful", content: { "application/json": { schema: LogoutResponseSchema, example: { message: "Logout successful" } } } },
+      400: { description: "No token provided", content: { "application/json": { schema: ErrorSchema, example: { error: "No token provided" } } } },
+      500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
+    },
+  }),
+  async (c) => {
+    try {
+      const token = c.req.header("Authorization")?.replace("Bearer ", "");
+      if (!token) {
+        return c.json({ error: "No token provided" }, 400);
+      }
+
+      // masukkan token ke blacklist
+      await prisma.invalidToken.create({ data: { token } });
+
+      // hapus refresh token user
+      const rawPayload = await verify(token, process.env.JWT_SECRET!, "HS256");
+      const payload = JWTPayloadSchema.parse(rawPayload);
+
+      await prisma.refreshToken.deleteMany({ where: { userId: payload.userId } });
+
+      return c.json({ message: "Logout successful" }, 200);
+    } catch (err) {
+      console.error("Error logout:", err);
       return c.json({ error: "Internal server error" }, 500);
     }
   },
