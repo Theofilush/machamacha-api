@@ -121,7 +121,9 @@ authRoute.openapi(
   createRoute({
     method: "post",
     path: "/logout",
+    middleware: checkAuthorized,
     tags,
+    security: [{ bearerAuth: [] }],
     responses: {
       200: { description: "Logout successful", content: { "application/json": { schema: LogoutResponseSchema, example: { message: "Logout successful" } } } },
       400: { description: "No token provided", content: { "application/json": { schema: ErrorSchema, example: { error: "No token provided" } } } },
@@ -186,9 +188,9 @@ authRoute.openapi(
         return c.json({ error: "Invalid or expired refresh token" }, 401);
       }
 
-      const newAccessToken = await signRefreshToken({ userId: stored.userId });
+      const newAccessToken = await signAccessToken({ userId: stored.userId });
 
-      return c.json({ token: newAccessToken }, 200);
+      return c.json({ accessToken: newAccessToken }, 200);
     } catch (err) {
       console.error("Error refresh:", err);
       return c.json({ error: "Failed to refresh token" }, 500);

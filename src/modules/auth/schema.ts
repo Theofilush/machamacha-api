@@ -44,4 +44,4 @@ export const LogoutResponseSchema = z.object({ message: z.string() });
 export const ErrorSchema = z.object({ error: z.string() });
 export const SuccessSchema = z.object({ message: z.string() });
 export const RefreshRequestSchema = z.object({ refreshToken: z.string() });
-export const RefreshTokenResponseSchema = z.object({ token: z.string() });
+export const RefreshTokenResponseSchema = z.object({ accessToken: z.string() });
