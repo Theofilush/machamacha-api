@@ -1,27 +1,15 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { prisma } from "../../lib/prisma";
 import { AuthResponseSchema, ErrorSchema, JWTPayloadSchema, LoginSchema, LogoutResponseSchema, RefreshRequestSchema, RefreshTokenResponseSchema, RegisterSchema, UserResponseSchema } from "./schema";
-import * as argon2 from "argon2";
-import { sign, verify } from "hono/jwt";
+import { verify } from "hono/jwt";
 import { exampleRequestRegister, exampleResponseLogin, exampleResponseRegister } from "./payload-example";
 import { hashPassword, verifyPassword } from "../../lib/password";
 import { addDays } from "../../lib/date";
+import { signJWT } from "../../lib/jwt-utils";
 
 const tags = ["authentication"];
 
 export const authRoute = new OpenAPIHono();
-
-export async function signJWT(payload: object) {
-  return await sign(
-    {
-      ...payload,
-      issuedAt: Math.floor(Date.now() / 1000),
-      jwtUniqueId: crypto.randomUUID(),
-    },
-    process.env.JWT_SECRET!,
-    "HS256",
-  );
-}
 
 // POST /auth/login
 authRoute.openapi(
