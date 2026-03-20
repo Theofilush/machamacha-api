@@ -59,30 +59,36 @@ export async function signRefreshToken(payload: { userId: string; email?: string
 }
 
 export const checkAuthorized = createMiddleware(async (c, next) => {
-  const authHeader = c.req.header("Authorization");
+  try {
+    const authHeader = c.req.header("Authorization");
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return c.json({ error: "Authorization header not provided or invalid" }, 401);
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return c.json({ error: "Authorization header not provided or invalid" }, 401);
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    let decodedToken;
+    try {
+      decodedToken = await verifyToken(token);
+    } catch {
+      return c.json({ error: "Invalid or expired token." }, 401);
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: decodedToken.sub },
+    });
+
+    if (!user) {
+      return c.json({ error: "User not found." }, 401);
+    }
+
+    c.set("userId", decodedToken.sub);
+    c.set("email", decodedToken.email);
+    c.set("user", user);
+
+    await next();
+  } catch (err) {
+    console.error("Authorization error:", err);
+    return c.json({ error: "Failed to authorized." }, 500);
   }
-
-  const token = authHeader.replace("Bearer ", "");
-  const decodedToken = await verifyToken(token);
-
-  if (!decodedToken) {
-    return c.json({ error: "Invalid or expired token." }, 401);
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: decodedToken.sub },
-  });
-
-  if (!user) {
-    return c.json({ error: "User not found." }, 401);
-  }
-
-  c.set("userId", decodedToken.sub);
-  c.set("email", decodedToken.email);
-  c.set("user", user);
-
-  await next();
 });
