@@ -15,6 +15,10 @@ export const UserResponseSchema = z.object({
   email: z.email(),
 });
 
+export const BearerTokenSchema = z.object({
+  Authorization: z.string(),
+});
+
 export const AuthResponseSchema = z.object({
   accessToken: z.string(),
   refreshToken: z.string(),

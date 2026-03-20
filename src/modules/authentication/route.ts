@@ -1,6 +1,17 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { prisma } from "../../lib/prisma";
-import { AuthResponseSchema, ErrorSchema, JWTPayloadSchema, LoginSchema, LogoutResponseSchema, RefreshRequestSchema, RefreshTokenResponseSchema, RegisterSchema, UserResponseSchema } from "./schema";
+import {
+  AuthResponseSchema,
+  BearerTokenSchema,
+  ErrorSchema,
+  JWTPayloadSchema,
+  LoginSchema,
+  LogoutResponseSchema,
+  RefreshRequestSchema,
+  RefreshTokenResponseSchema,
+  RegisterSchema,
+  UserResponseSchema,
+} from "./schema";
 import { verify } from "hono/jwt";
 import { exampleRequestRegister, exampleResponseLogin, exampleResponseRegister } from "./payload-example";
 import { hashPassword, verifyPassword, verifyToken } from "../../lib/password";
@@ -179,6 +190,50 @@ authRoute.openapi(
       return c.json({ token: newAccessToken }, 200);
     } catch (err) {
       console.error("Error refresh:", err);
+      return c.json({ error: "Internal server error" }, 500);
+    }
+  },
+);
+
+// GET /auth/me
+authRoute.openapi(
+  createRoute({
+    method: "get",
+    path: "/me",
+    // request: {
+    //   headers: {
+    //     Authorization: {
+    //       description: "Bearer token",
+    //       required: true,
+    //       schema: BearerTokenSchema,
+    //     },
+    //   },
+    // },
+    tags,
+    security: [{ bearerAuth: [] }],
+    responses: {
+      200: { description: "User profile", content: { "application/json": { schema: UserResponseSchema, example: { id: "user-id", email: "[EMAIL_ADDRESS]" } } } },
+      401: { description: "Unauthorized", content: { "application/json": { schema: ErrorSchema, example: { error: "Unauthorized" } } } },
+      404: { description: "User not found", content: { "application/json": { schema: ErrorSchema, example: { error: "User not found" } } } },
+      500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
+    },
+  }),
+  async (c) => {
+    try {
+      const token = c.req.header("Authorization")?.replace("Bearer ", "");
+      if (!token) {
+        return c.json({ error: "No token provided" }, 401);
+      }
+
+      const payload = await verifyToken(token);
+      const user = await prisma.user.findUnique({ where: { id: payload.sub } });
+      if (!user) {
+        return c.json({ error: "User not found" }, 404);
+      }
+
+      return c.json({ id: user.id, email: user.email }, 200);
+    } catch (err) {
+      console.error("Error me:", err);
       return c.json({ error: "Internal server error" }, 500);
     }
   },
