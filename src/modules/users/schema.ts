@@ -5,6 +5,7 @@ import { UserModelSchema } from "../../generated/zod/schemas";
 export const UserSchema = UserModelSchema.omit({
   password: true,
   carts: true,
+  refreshTokens: true,
   createdAt: true,
   updatedAt: true,
 });

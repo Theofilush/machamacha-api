@@ -1,9 +1,11 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { prisma } from "../../lib/prisma";
 import { AuthResponseSchema, ErrorSchema, JWTPayloadSchema, LoginSchema, LogoutResponseSchema, RefreshRequestSchema, RefreshTokenResponseSchema, RegisterSchema, UserResponseSchema } from "./schema";
-import bcrypt from "bcryptjs";
+import * as argon2 from "argon2";
 import { sign, verify } from "hono/jwt";
 import { exampleRequestRegister, exampleResponseLogin, exampleResponseRegister } from "./payload-example";
+import { hashPassword, verifyPassword } from "../../lib/password";
+import { addDays } from "../../lib/date";
 
 const tags = ["authentication"];
 
@@ -47,7 +49,7 @@ authRoute.openapi(
         return c.json({ error: "Invalid email or password" }, 401);
       }
 
-      const isValid = await bcrypt.compare(password, user.password.hash);
+      const isValid = await verifyPassword(user.password.hash, password);
       if (!isValid) {
         return c.json({ error: "Invalid email or password" }, 401);
       }
@@ -59,12 +61,12 @@ authRoute.openapi(
         where: { userId: user.id },
         update: {
           token: refreshToken,
-          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          expiresAt: addDays(new Date(), 7),
         },
         create: {
           token: refreshToken,
           userId: user.id,
-          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          expiresAt: addDays(new Date(), 7),
         },
       });
 
@@ -97,14 +99,12 @@ authRoute.openapi(
       if (existing) {
         return c.json({ error: "User already exists" }, 409);
       }
-      const hash = await bcrypt.hash(password, 10);
 
+      const hash = await hashPassword(password);
       const newUser = await prisma.user.create({
         data: {
           email,
-          password: {
-            create: { hash },
-          },
+          password: { create: { hash } },
         },
       });
 
