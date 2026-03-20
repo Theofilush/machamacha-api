@@ -16,7 +16,7 @@ cartRoute.openapi(
     responses: {
       200: { description: "List of all carts", content: { "application/json": { schema: CartListResponseSchema, example: exampleResponseCartList } } },
       401: { description: "Unauthorized. Invalid authentication token.", content: { "application/json": { schema: ErrorSchema, example: { error: "Unauthorized. Invalid authentication token." } } } },
-      500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
+      500: { description: "Failed to get all carts", content: { "application/json": { schema: ErrorSchema, example: { error: "Failed to get all carts" } } } },
     },
   }),
   async (c) => {
@@ -42,7 +42,7 @@ cartRoute.openapi(
       return c.json(carts, 200);
     } catch (err) {
       console.error("Error get carts:", err);
-      return c.json({ error: "Internal server error" }, 500);
+      return c.json({ error: "Failed to get all carts" }, 500);
     }
   },
 );

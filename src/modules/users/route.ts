@@ -14,7 +14,7 @@ userRoute.openapi(
     tags,
     responses: {
       200: { description: "Retrieve all users", content: { "application/json": { schema: UsersSchema } } },
-      500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
+      500: { description: "Failed to retrieve users", content: { "application/json": { schema: ErrorSchema, example: { error: "Failed to retrieve users" } } } },
     },
   }),
   async (c) => {

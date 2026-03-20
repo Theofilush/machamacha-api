@@ -16,7 +16,7 @@ productRoute.openapi(
     tags,
     responses: {
       200: { description: "Retrieve all products", content: { "application/json": { schema: ProductsSchema } } },
-      500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
+      500: { description: "Failed to get all products", content: { "application/json": { schema: ErrorSchema, example: { error: "Failed to get all products" } } } },
     },
   }),
   async (c) => {
@@ -43,7 +43,7 @@ productRoute.openapi(
     responses: {
       200: { description: "Retrieve a Product by slug", content: { "application/json": { schema: ProductSchema, example: exampleResponseGetBySlug } } },
       404: { description: "Product not found", content: { "application/json": { schema: ErrorSchema, example: { error: "Product not found" } } } },
-      500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
+      500: { description: "Failed to get product by slug", content: { "application/json": { schema: ErrorSchema, example: { error: "Failed to get product by slug" } } } },
     },
   }),
   async (c) => {
@@ -78,7 +78,7 @@ productRoute.openapi(
     responses: {
       200: { description: "Product deleted successfully", content: { "application/json": { schema: SuccessSchema, example: { message: "Product deleted successfully" } } } },
       404: { description: "Product not found", content: { "application/json": { schema: ErrorSchema, example: { error: "Product not found" } } } },
-      500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
+      500: { description: "Failed to delete product", content: { "application/json": { schema: ErrorSchema, example: { error: "Failed to delete product" } } } },
     },
   }),
   async (c) => {
@@ -92,7 +92,7 @@ productRoute.openapi(
       if (err.code === "P2025") {
         return c.json({ error: "Product not found" }, 404);
       }
-      return c.json({ error: "Internal server error" }, 500);
+      return c.json({ error: "Failed to delete product" }, 500);
     }
   },
 );
@@ -109,7 +109,7 @@ productRoute.openapi(
     responses: {
       201: { description: "Product created successfully", content: { "application/json": { schema: ProductSchema, example: exampleResponseCreateProduct } } },
       409: { description: "Product already exists", content: { "application/json": { schema: ErrorSchema, example: { error: "Product already exists" } } } },
-      500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
+      500: { description: "Failed to create product", content: { "application/json": { schema: ErrorSchema, example: { error: "Failed to create product" } } } },
     },
   }),
   async (c) => {
@@ -136,7 +136,7 @@ productRoute.openapi(
       if (err.code === "P2002") {
         return c.json({ error: "Product already exists" }, 409);
       }
-      return c.json({ error: "Internal server error" }, 500);
+      return c.json({ error: "Failed to create product" }, 500);
     }
   },
 );
@@ -157,7 +157,7 @@ productRoute.openapi(
       200: { description: "Product updated successfully", content: { "application/json": { schema: ProductSchema, example: exampleResponseUpdateProduct } } },
       404: { description: "Product not found", content: { "application/json": { schema: ErrorSchema, example: { error: "Product not found" } } } },
       409: { description: "Product already exists", content: { "application/json": { schema: ErrorSchema, example: { error: "Product already exists" } } } },
-      500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
+      500: { description: "Failed to update product", content: { "application/json": { schema: ErrorSchema, example: { error: "Failed to update product" } } } },
     },
   }),
   async (c) => {
@@ -191,7 +191,7 @@ productRoute.openapi(
       if (err.code === "P2002") {
         return c.json({ error: "Product already exists" }, 409);
       }
-      return c.json({ error: "Internal server error" }, 500);
+      return c.json({ error: "Failed to update product" }, 500);
     }
   },
 );

@@ -33,7 +33,7 @@ authRoute.openapi(
     responses: {
       200: { description: "Login successful", content: { "application/json": { schema: AuthResponseSchema, example: exampleResponseLogin } } },
       401: { description: "Invalid credentials", content: { "application/json": { schema: ErrorSchema, example: { error: "Invalid credentials" } } } },
-      500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
+      500: { description: "Failed to login", content: { "application/json": { schema: ErrorSchema, example: { error: "Failed to login" } } } },
     },
   }),
   async (c) => {
@@ -73,7 +73,7 @@ authRoute.openapi(
       return c.json({ accessToken: accessToken, refreshToken, user: { id: user.id, email: user.email } }, 200);
     } catch (err) {
       console.error("Error login:", err);
-      return c.json({ error: "Internal server error" }, 500);
+      return c.json({ error: "Failed to login" }, 500);
     }
   },
 );
@@ -88,7 +88,7 @@ authRoute.openapi(
     responses: {
       201: { description: "User registered successfully", content: { "application/json": { schema: UserResponseSchema, example: exampleResponseRegister } } },
       409: { description: "User already exists", content: { "application/json": { schema: ErrorSchema, example: { error: "User already exists" } } } },
-      500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
+      500: { description: "Failed to register", content: { "application/json": { schema: ErrorSchema, example: { error: "Failed to register" } } } },
     },
   }),
   async (c) => {
@@ -111,7 +111,7 @@ authRoute.openapi(
       return c.json({ id: newUser.id, email: newUser.email }, 201);
     } catch (err) {
       console.error("Error register:", err);
-      return c.json({ error: "Internal server error" }, 500);
+      return c.json({ error: "Failed to register" }, 500);
     }
   },
 );
@@ -126,7 +126,7 @@ authRoute.openapi(
       200: { description: "Logout successful", content: { "application/json": { schema: LogoutResponseSchema, example: { message: "Logout successful" } } } },
       400: { description: "No token provided", content: { "application/json": { schema: ErrorSchema, example: { error: "No token provided" } } } },
       401: { description: "Invalid or expired token", content: { "application/json": { schema: ErrorSchema, example: { error: "Invalid or expired token" } } } },
-      500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
+      500: { description: "Failed to logout", content: { "application/json": { schema: ErrorSchema, example: { error: "Failed to logout" } } } },
     },
   }),
   async (c) => {
@@ -156,7 +156,7 @@ authRoute.openapi(
       return c.json({ message: "Logout successful" }, 200);
     } catch (err) {
       console.error("Error logout:", err);
-      return c.json({ error: "Internal server error" }, 500);
+      return c.json({ error: "Failed to logout" }, 500);
     }
   },
 );
@@ -171,7 +171,7 @@ authRoute.openapi(
     responses: {
       200: { description: "New access token issued", content: { "application/json": { schema: RefreshTokenResponseSchema, example: { token: "new.jwt.token.here" } } } },
       401: { description: "Invalid or expired refresh token", content: { "application/json": { schema: ErrorSchema, example: { error: "Invalid refresh token" } } } },
-      500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
+      500: { description: "Failed to refresh token", content: { "application/json": { schema: ErrorSchema, example: { error: "Failed to refresh token" } } } },
     },
   }),
   async (c) => {
@@ -191,7 +191,7 @@ authRoute.openapi(
       return c.json({ token: newAccessToken }, 200);
     } catch (err) {
       console.error("Error refresh:", err);
-      return c.json({ error: "Internal server error" }, 500);
+      return c.json({ error: "Failed to refresh token" }, 500);
     }
   },
 );
@@ -210,7 +210,7 @@ authRoute.openapi(
         description: "Authorization header not provided or invalid",
         content: { "application/json": { schema: ErrorSchema, example: { error: "Authorization header not provided or invalid" } } },
       },
-      500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
+      500: { description: "Failed to get user profile", content: { "application/json": { schema: ErrorSchema, example: { error: "Failed to get user profile" } } } },
     },
   }),
   async (c) => {
@@ -220,7 +220,7 @@ authRoute.openapi(
       return c.json(user, 200);
     } catch (err) {
       console.error("Error me:", err);
-      return c.json({ error: "Internal server error" }, 500);
+      return c.json({ error: "Failed to get user profile" }, 500);
     }
   },
 );
