@@ -6,7 +6,7 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { productRoute } from "./modules/products/route";
 import { userRoute } from "./modules/users/route";
-import { authRoute } from "./modules/authentication/route";
+import { authRoute } from "./modules/auth/route";
 import { cartRoute } from "./modules/carts/route";
 
 const app = new OpenAPIHono();
