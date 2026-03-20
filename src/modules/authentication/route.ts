@@ -3,9 +3,9 @@ import { prisma } from "../../lib/prisma";
 import { AuthResponseSchema, ErrorSchema, JWTPayloadSchema, LoginSchema, LogoutResponseSchema, RefreshRequestSchema, RefreshTokenResponseSchema, RegisterSchema, UserResponseSchema } from "./schema";
 import { verify } from "hono/jwt";
 import { exampleRequestRegister, exampleResponseLogin, exampleResponseRegister } from "./payload-example";
-import { hashPassword, verifyPassword } from "../../lib/password";
+import { hashPassword, verifyPassword, verifyToken } from "../../lib/password";
 import { addDays } from "../../lib/date";
-import { signJWT } from "../../lib/jwt-utils";
+import { signAccessToken, signRefreshToken } from "../../lib/password";
 
 const tags = ["authentication"];
 
@@ -42,8 +42,8 @@ authRoute.openapi(
         return c.json({ error: "Invalid email or password" }, 401);
       }
 
-      const token = await signJWT({ userId: user.id, email: user.email });
-      const refreshToken = await signJWT({ userId: user.id });
+      const accessToken = await signAccessToken({ userId: user.id, email: user.email });
+      const refreshToken = await signRefreshToken({ userId: user.id });
 
       await prisma.refreshToken.upsert({
         where: { userId: user.id },
@@ -58,7 +58,7 @@ authRoute.openapi(
         },
       });
 
-      return c.json({ token, refreshToken, user: { id: user.id, email: user.email } }, 200);
+      return c.json({ accessToken: accessToken, refreshToken, user: { id: user.id, email: user.email } }, 200);
     } catch (err) {
       console.error("Error login:", err);
       return c.json({ error: "Internal server error" }, 500);
@@ -130,14 +130,14 @@ authRoute.openapi(
       }
       let rawPayload;
       try {
-        rawPayload = await verify(token, process.env.JWT_SECRET!, "HS256");
+        rawPayload = await verifyToken(token);
       } catch {
         return c.json({ error: "Invalid or expired token" }, 401);
       }
 
       const payload = JWTPayloadSchema.parse(rawPayload);
 
-      await prisma.refreshToken.deleteMany({ where: { userId: payload.userId } });
+      await prisma.refreshToken.deleteMany({ where: { userId: payload.sub } });
 
       await prisma.invalidToken.create({ data: { token } });
 
@@ -174,7 +174,7 @@ authRoute.openapi(
         return c.json({ error: "Invalid or expired refresh token" }, 401);
       }
 
-      const newAccessToken = await signJWT({ userId: stored.userId });
+      const newAccessToken = await signRefreshToken({ userId: stored.userId });
 
       return c.json({ token: newAccessToken }, 200);
     } catch (err) {
