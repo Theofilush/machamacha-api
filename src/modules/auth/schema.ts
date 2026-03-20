@@ -14,6 +14,12 @@ export const UserResponseSchema = z.object({
   id: z.string(),
   email: z.email(),
 });
+export const UserMeResponseSchema = z.object({
+  id: z.string(),
+  email: z.email(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
 
 export const BearerTokenSchema = z.object({
   Authorization: z.string(),

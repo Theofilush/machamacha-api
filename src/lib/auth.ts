@@ -1,7 +1,9 @@
 import * as argon2 from "argon2";
 import { sign, verify } from "hono/jwt";
-
-import { JWTPayloadSchema } from "../modules/authentication/schema";
+import { createMiddleware } from "hono/factory";
+import type { Context, Next } from "hono";
+import { JWTPayloadSchema } from "../modules/auth/schema";
+import { prisma } from "./prisma";
 
 const tokenSecretKey = String(process.env.JWT_SECRET);
 const ACCESS_TOKEN_EXP = 60 * 15; // 15 minutes
@@ -55,3 +57,32 @@ export async function signRefreshToken(payload: { userId: string; email?: string
     "HS256",
   );
 }
+
+export const checkAuthorized = createMiddleware(async (c, next) => {
+  const authHeader = c.req.header("Authorization");
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return c.json({ error: "Authorization header not provided or invalid" }, 401);
+  }
+
+  const token = authHeader.replace("Bearer ", "");
+  const decodedToken = await verifyToken(token);
+
+  if (!decodedToken) {
+    return c.json({ error: "Invalid or expired token." }, 401);
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: decodedToken.sub },
+  });
+
+  if (!user) {
+    return c.json({ error: "User not found." }, 401);
+  }
+
+  c.set("userId", decodedToken.sub);
+  c.set("email", decodedToken.email);
+  c.set("user", user);
+
+  await next();
+});

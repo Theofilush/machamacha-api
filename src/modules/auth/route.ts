@@ -10,13 +10,14 @@ import {
   RefreshRequestSchema,
   RefreshTokenResponseSchema,
   RegisterSchema,
+  UserMeResponseSchema,
   UserResponseSchema,
 } from "./schema";
 import { verify } from "hono/jwt";
 import { exampleRequestRegister, exampleResponseLogin, exampleResponseRegister } from "./payload-example";
-import { hashPassword, verifyPassword, verifyToken } from "../../lib/password";
+import { checkAuthorized, hashPassword, verifyPassword, verifyToken } from "../../lib/auth";
 import { addDays } from "../../lib/date";
-import { signAccessToken, signRefreshToken } from "../../lib/password";
+import { signAccessToken, signRefreshToken } from "../../lib/auth";
 
 const tags = ["authentication"];
 
@@ -200,38 +201,23 @@ authRoute.openapi(
   createRoute({
     method: "get",
     path: "/me",
-    // request: {
-    //   headers: {
-    //     Authorization: {
-    //       description: "Bearer token",
-    //       required: true,
-    //       schema: BearerTokenSchema,
-    //     },
-    //   },
-    // },
+    middleware: checkAuthorized,
     tags,
     security: [{ bearerAuth: [] }],
     responses: {
-      200: { description: "User profile", content: { "application/json": { schema: UserResponseSchema, example: { id: "user-id", email: "[EMAIL_ADDRESS]" } } } },
-      401: { description: "Unauthorized", content: { "application/json": { schema: ErrorSchema, example: { error: "Unauthorized" } } } },
-      404: { description: "User not found", content: { "application/json": { schema: ErrorSchema, example: { error: "User not found" } } } },
+      200: { description: "Get user profile", content: { "application/json": { schema: UserMeResponseSchema, example: { id: "user-id", email: "[EMAIL_ADDRESS]" } } } },
+      401: {
+        description: "Authorization header not provided or invalid",
+        content: { "application/json": { schema: ErrorSchema, example: { error: "Authorization header not provided or invalid" } } },
+      },
       500: { description: "Internal server error", content: { "application/json": { schema: ErrorSchema, example: { error: "Internal server error" } } } },
     },
   }),
   async (c) => {
     try {
-      const token = c.req.header("Authorization")?.replace("Bearer ", "");
-      if (!token) {
-        return c.json({ error: "No token provided" }, 401);
-      }
+      const user = c.get("user");
 
-      const payload = await verifyToken(token);
-      const user = await prisma.user.findUnique({ where: { id: payload.sub } });
-      if (!user) {
-        return c.json({ error: "User not found" }, 404);
-      }
-
-      return c.json({ id: user.id, email: user.email }, 200);
+      return c.json(user, 200);
     } catch (err) {
       console.error("Error me:", err);
       return c.json({ error: "Internal server error" }, 500);
