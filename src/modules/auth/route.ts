@@ -19,7 +19,7 @@ import { checkAuthorized, hashPassword, verifyPassword, verifyToken } from "../.
 import { addDays } from "../../lib/date";
 import { signAccessToken, signRefreshToken } from "../../lib/auth";
 
-const tags = ["authentication"];
+const tags = ["auth"];
 
 export const authRoute = new OpenAPIHono();
 

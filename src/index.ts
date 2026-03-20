@@ -13,8 +13,8 @@ const app = new OpenAPIHono();
 
 app.use(cors());
 app.use(logger());
-app.route("/products", productRoute);
 
+app.route("/products", productRoute);
 app.route("/users", userRoute);
 app.route("/auth", authRoute);
 app.route("/carts", cartRoute);
@@ -53,5 +53,9 @@ app.doc("/openapi.json", {
 });
 
 app.get("/", Scalar({ url: "/openapi.json" }));
+
+app.notFound((c) => {
+  return c.json({ error: "Requested endpoint not found." }, 404);
+});
 
 export default app;
