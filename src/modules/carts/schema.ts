@@ -14,11 +14,12 @@ const FullProductSchema = z.object({
   category: z.string(),
   stock: z.number(),
   tags: z.array(z.string()),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
 });
 
-export const ProductSchema = FullProductSchema.omit({
+export const ProductSchema = ProductModelSchema.strip().omit({
+  cartItems: true,
   createdAt: true,
   updatedAt: true,
 });
@@ -28,32 +29,36 @@ const FullCartItemSchema = z.object({
   quantity: z.number(),
   productId: z.string(),
   cartId: z.string(),
-  product: FullProductSchema,
+  product: ProductModelSchema,
   createdAt: z.date(),
   updatedAt: z.date(),
 });
 
-export const CartItemSchema = FullCartItemSchema.omit({
-  createdAt: true,
-  updatedAt: true,
-}).extend({
-  product: ProductSchema,
-});
+export const CartItemSchema = CartItemModelSchema.strip()
+  .omit({
+    createdAt: true,
+    updatedAt: true,
+  })
+  .extend({
+    product: ProductSchema,
+  });
 
 const FullCartSchema = z.object({
   id: z.string(),
   userId: z.string(),
-  items: z.array(FullCartItemSchema),
+  items: z.array(CartItemModelSchema),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
 
-export const CartSchema = FullCartSchema.omit({
-  createdAt: true,
-  updatedAt: true,
-}).extend({
-  items: z.array(CartItemSchema),
-});
+export const CartSchema = CartModelSchema.strip()
+  .omit({
+    createdAt: true,
+    updatedAt: true,
+  })
+  .extend({
+    items: z.array(CartItemSchema),
+  });
 
 export const CartResponseSchema = CartSchema;
 export const CartsSchema = z.array(CartSchema);

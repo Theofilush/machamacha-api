@@ -40,7 +40,8 @@ cartRoute.openapi(
         return c.json(newCart, 200);
       }
 
-      console.log(cart);
+      console.log("----cart", cart);
+      console.log("----product", cart.items[0].product);
       const parsedCart = CartSchema.parse(cart);
       return c.json(parsedCart, 200);
     } catch (err) {
