@@ -38,6 +38,7 @@ export const CartItemSchema = CartItemModelSchema.strip()
   .omit({
     createdAt: true,
     updatedAt: true,
+    cart: true,
   })
   .extend({
     product: ProductSchema,
@@ -55,6 +56,7 @@ export const CartSchema = CartModelSchema.strip()
   .omit({
     createdAt: true,
     updatedAt: true,
+    user: true,
   })
   .extend({
     items: z.array(CartItemSchema),
