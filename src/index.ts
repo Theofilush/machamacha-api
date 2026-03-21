@@ -17,7 +17,7 @@ app.use(logger());
 app.route("/products", productRoute);
 app.route("/users", userRoute);
 app.route("/auth", authRoute);
-app.route("/carts", cartRoute);
+app.route("/cart", cartRoute);
 
 app.doc("/openapi.json", {
   openapi: "3.0.4",

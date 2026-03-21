@@ -3,48 +3,42 @@ import { z } from "@hono/zod-openapi";
 export const ErrorSchema = z.object({ error: z.string() });
 export const SuccessSchema = z.object({ message: z.string() });
 
-import { CartModelSchema } from "../../generated/zod/schemas";
-import { PublicUserSchema } from "../users/schema";
-import { ProductSchema } from "../products/schema";
-
-// export const CartItemSchema = z.object({
-//   id: z.string().openapi({ example: "01ARZ3NDEKTSV4RRFFQ69G5FAV", description: "Unique cart item ID" }),
-//   productId: z.string().openapi({ example: "01ARZ3NDEKTSV4RRFFQ69G5FAV", description: "Unique product ID" }),
-//   quantity: z.number().int().nonnegative().openapi({ example: 2 }),
-//   createdAt: z.date().openapi({ example: "2026-02-14T18:00:00Z" }),
-//   updatedAt: z.date().openapi({ example: "2026-02-14T18:00:00Z" }),
-// });
-
-// export const CartSchema = z.object({
-//   id: z.string().openapi({ example: "01ARZ3NDEKTSV4RRFFQ69G5FAV", description: "Unique cart ID" }),
-//   userId: z.string().openapi({ example: "01ARZ3NDEKTSV4RRFFQ69G5FAV", description: "Unique user ID" }),
-//   createdAt: z.date().openapi({ example: "2026-02-14T18:00:00Z" }),
-//   updatedAt: z.date().openapi({ example: "2026-02-14T18:00:00Z" }),
-//   items: z.array(CartItemSchema).default([]),
-// });
-
-// export type Cart = z.infer<typeof CartSchema>;
-// export type Carts = z.infer<typeof CartsSchema>;
+import { CartItemModelSchema, CartModelSchema, ProductModelSchema } from "../../generated/zod/schemas";
 
 export const CartsSchema = z.array(CartModelSchema);
 
-export const CartItemSchema = z.object({
-  id: z.string(),
-  productId: z.string(),
-  product: ProductSchema,
-  quantity: z.number().int(),
-  cartId: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+export const CartItemSchema = CartItemModelSchema.strip().extend({
+  product: ProductModelSchema.strip().omit({
+    createdAt: true,
+    updatedAt: true,
+  }),
 });
+// .omit({
+//   cartId: true,
+//   createdAt: true,
+//   updatedAt: true,
+// })
+// .openapi("CartItem");
 
-export const CartSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
+export const CartSchema = CartModelSchema.extend({
   items: z.array(CartItemSchema),
-  user: PublicUserSchema.optional(),
+});
+
+export const AddCartItemSchema = z.object({
+  productId: z.string(),
+  quantity: z.number().default(1),
+});
+
+export const CartItemSchema2 = z.object({
+  id: z.string(),
+
+  quantity: z.number(),
+
+  productId: z.string(),
+  product: ProductModelSchema,
+
+  cartId: z.string(),
+
   createdAt: z.date(),
   updatedAt: z.date(),
 });
-
-export const CartListResponseSchema = z.array(CartSchema);
