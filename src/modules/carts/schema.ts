@@ -4,6 +4,8 @@ export const ErrorSchema = z.object({ error: z.string() });
 export const SuccessSchema = z.object({ message: z.string() });
 
 import { CartModelSchema } from "../../generated/zod/schemas";
+import { PublicUserSchema } from "../users/schema";
+import { ProductSchema } from "../products/schema";
 
 // export const CartItemSchema = z.object({
 //   id: z.string().openapi({ example: "01ARZ3NDEKTSV4RRFFQ69G5FAV", description: "Unique cart item ID" }),
@@ -29,6 +31,7 @@ export const CartsSchema = z.array(CartModelSchema);
 export const CartItemSchema = z.object({
   id: z.string(),
   productId: z.string(),
+  product: ProductSchema,
   quantity: z.number().int(),
   cartId: z.string(),
   createdAt: z.date(),
@@ -38,9 +41,10 @@ export const CartItemSchema = z.object({
 export const CartSchema = z.object({
   id: z.string(),
   userId: z.string(),
+  items: z.array(CartItemSchema),
+  user: PublicUserSchema.optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
-  items: z.array(CartItemSchema),
 });
 
 export const CartListResponseSchema = z.array(CartSchema);

@@ -14,3 +14,10 @@ export const UsersSchema = z.array(UserSchema);
 
 export const ErrorSchema = z.object({ error: z.string() });
 export const SuccessSchema = z.object({ message: z.string() });
+
+export const PublicUserSchema = z.object({
+  id: z.string(),
+  email: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
