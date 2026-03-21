@@ -21,10 +21,6 @@ export const UserMeResponseSchema = z.object({
   updatedAt: z.date(),
 });
 
-export const BearerTokenSchema = z.object({
-  Authorization: z.string(),
-});
-
 export const AuthResponseSchema = z.object({
   accessToken: z.string(),
   refreshToken: z.string(),
