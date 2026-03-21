@@ -41,8 +41,8 @@ cartRoute.openapi(
       }
 
       console.log(cart);
-      const parsed = CartSchema.parse(cart);
-      return c.json(parsed, 200);
+      const parsedCart = CartSchema.parse(cart);
+      return c.json(parsedCart, 200);
     } catch (err) {
       console.error("Error get carts:", err);
       return c.json({ error: "Failed to get all carts" }, 500);
@@ -91,7 +91,8 @@ cartRoute.openapi(
       });
 
       console.log(newCartItem);
-      return c.json(user, 200);
+      const parsedNewCartItem = CartItemSchema.parse(newCartItem);
+      return c.json(parsedNewCartItem, 200);
     } catch (err) {
       console.error("Error get carts:", err);
       return c.json({ error: "Failed to add item to cart" }, 500);
