@@ -1,6 +1,6 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
 import { prisma } from "../../lib/prisma";
-import { AddCartItemSchema, CartItemSchema, CartSchema, CartsSchema, ErrorSchema } from "./schema";
+import { AddCartItemSchema, CartItemSchema, CartSchema, ErrorSchema } from "./schema";
 import { exampleResponseCartList } from "./payload-example";
 import { checkAuthorized } from "../../lib/auth";
 
