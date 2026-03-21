@@ -1,6 +1,6 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
 import { prisma } from "../../lib/prisma";
-import { AddCartItemSchema, CartItemSchema, CartItemSchema2, CartsSchema, ErrorSchema } from "./schema";
+import { AddCartItemSchema, CartItemSchema, CartSchema, CartsSchema, ErrorSchema } from "./schema";
 import { exampleResponseCartList } from "./payload-example";
 import { checkAuthorized } from "../../lib/auth";
 
@@ -8,6 +8,7 @@ const tags = ["carts"];
 
 export const cartRoute = new OpenAPIHono();
 
+// GET /cart/
 cartRoute.openapi(
   createRoute({
     method: "get",
@@ -16,7 +17,7 @@ cartRoute.openapi(
     tags,
     security: [{ bearerAuth: [] }],
     responses: {
-      200: { description: "List of all carts", content: { "application/json": { schema: CartsSchema, example: exampleResponseCartList } } },
+      200: { description: "List of all carts", content: { "application/json": { schema: CartSchema, example: exampleResponseCartList } } },
       401: { description: "Unauthorized. Invalid authentication token.", content: { "application/json": { schema: ErrorSchema, example: { error: "Unauthorized. Invalid authentication token." } } } },
       500: { description: "Failed to get all carts", content: { "application/json": { schema: ErrorSchema, example: { error: "Failed to get all carts" } } } },
     },
@@ -40,7 +41,8 @@ cartRoute.openapi(
       }
 
       console.log(cart);
-      return c.json(user, 200);
+      const parsed = CartSchema.parse(cart);
+      return c.json(parsed, 200);
     } catch (err) {
       console.error("Error get carts:", err);
       return c.json({ error: "Failed to get all carts" }, 500);
@@ -60,7 +62,7 @@ cartRoute.openapi(
       body: { content: { "application/json": { schema: AddCartItemSchema } } },
     },
     responses: {
-      200: { description: "Item added to cart", content: { "application/json": { schema: CartItemSchema2, example: exampleResponseCartList } } },
+      200: { description: "Item added to cart", content: { "application/json": { schema: CartItemSchema, example: exampleResponseCartList } } },
       400: { description: "Bad request. Invalid request body.", content: { "application/json": { schema: ErrorSchema, example: { error: "Bad request. Invalid request body." } } } },
       401: { description: "Unauthorized. Invalid authentication token.", content: { "application/json": { schema: ErrorSchema, example: { error: "Unauthorized. Invalid authentication token." } } } },
       500: { description: "Failed to add item to cart", content: { "application/json": { schema: ErrorSchema, example: { error: "Failed to add item to cart" } } } },
