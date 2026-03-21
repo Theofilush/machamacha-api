@@ -2,7 +2,6 @@ import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { prisma } from "../../lib/prisma";
 import {
   AuthResponseSchema,
-  BearerTokenSchema,
   ErrorSchema,
   JWTPayloadSchema,
   LoginSchema,
@@ -13,7 +12,6 @@ import {
   UserMeResponseSchema,
   UserResponseSchema,
 } from "./schema";
-import { verify } from "hono/jwt";
 import { exampleRequestRegister, exampleResponseLogin, exampleResponseRegister } from "./payload-example";
 import { checkAuthorized, hashPassword, verifyPassword, verifyToken } from "../../lib/auth";
 import { addDays } from "../../lib/date";
