@@ -6,7 +6,7 @@ import { JWTPayloadSchema } from "../modules/auth/schema";
 import { prisma } from "./prisma";
 
 const tokenSecretKey = String(process.env.JWT_SECRET);
-const ACCESS_TOKEN_EXP = 60 * 15; // 15 minutes
+const ACCESS_TOKEN_EXP = 60 * 60; // 60 minutes
 const REFRESH_TOKEN_EXP = 60 * 60 * 24 * 7; // 7 days
 
 export interface JWTPayload {
