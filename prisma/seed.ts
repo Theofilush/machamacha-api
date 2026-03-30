@@ -1,5 +1,5 @@
 import { prisma } from "../src/lib/prisma";
-import { dataProducts } from "../src/modules/products/data2";
+import { dataProducts } from "../src/modules/products/data";
 
 async function main() {
   for (const product of dataProducts) {
