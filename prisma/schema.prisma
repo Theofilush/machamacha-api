@@ -24,7 +24,7 @@ model Product {
   slug        String   @unique
   price       Int
   imageUrl    String
-  description String
+  description String   @db.Text
   category    String
   stock       Int      @default(0)
   tags        String[]
@@ -78,6 +78,8 @@ model Cart {
 
   items CartItem[]
 
+  totalPrice Int
+
   user   User   @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   userId String
 
@@ -88,7 +90,8 @@ model Cart {
 model CartItem {
   id String @id @default(ulid())
 
-  quantity Int
+  quantity      Int
+  subtotalPrice Int
 
   product   Product @relation(fields: [productId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   productId String
