@@ -21,6 +21,7 @@
     "@scalar/hono-api-reference": "^0.9.48",
     "argon2": "^0.44.0",
     "bcryptjs": "^3.0.3",
+    "better-auth": "^1.6.5",
     "dotenv": "^17.4.2",
     "hono": "^4.12.14",
     "jsonwebtoken": "^9.0.3",

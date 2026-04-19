@@ -4,6 +4,8 @@ import { createFactory } from "hono/factory";
 import { JWTPayloadSchema, UserMeResponseSchema } from "../modules/auth/schema";
 import { prisma } from "./prisma";
 import z from "zod";
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
 
 const tokenSecretKey = String(process.env.JWT_SECRET);
 const ACCESS_TOKEN_EXP = 60 * 60; // 60 minutes
@@ -100,4 +102,22 @@ export const checkAuthorized = factory.createMiddleware(async (c, next) => {
     console.error("Authorization error:", err);
     return c.json({ error: "Failed to authorized." }, 500);
   }
+});
+
+export const auth = betterAuth({
+  baseURL: process.env.BASE_URL || "http://localhost:3000",
+  trustedOrigins: ["http://localhost:5173"],
+  database: prismaAdapter(prisma, {
+    provider: "postgresql",
+  }),
+  basePath: "/auth",
+  emailAndPassword: {
+    enabled: true,
+  },
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    },
+  },
 });
