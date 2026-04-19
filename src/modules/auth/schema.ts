@@ -35,9 +35,10 @@ export const JWTPayloadSchema = z.object({
   jti: z.string(),
 });
 
-export const RefreshTokenSchema = z.object({ refreshToken: z.string() });
-export const LogoutResponseSchema = z.object({ message: z.string() });
+// export type UserSchema = z.infer<typeof UserSchema>;
 export const ErrorSchema = z.object({ error: z.string() });
 export const SuccessSchema = z.object({ message: z.string() });
+export const LogoutResponseSchema = z.object({ message: z.string() });
+export const RefreshTokenSchema = z.object({ refreshToken: z.string() });
 export const RefreshRequestSchema = z.object({ refreshToken: z.string() });
 export const RefreshTokenResponseSchema = z.object({ accessToken: z.string() });

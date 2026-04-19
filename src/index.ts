@@ -54,6 +54,12 @@ app.doc("/openapi.json", {
 
 app.get("/", Scalar({ url: "/openapi.json" }));
 
+app.openAPIRegistry.registerComponent("securitySchemes", "bearerAuth", {
+  type: "http",
+  scheme: "bearer",
+  bearerFormat: "JWT",
+});
+
 app.notFound((c) => {
   return c.json({ error: "Requested endpoint not found." }, 404);
 });

@@ -1,9 +1,9 @@
 import * as argon2 from "argon2";
 import { sign, verify } from "hono/jwt";
-import { createMiddleware } from "hono/factory";
-import type { Context, Next } from "hono";
-import { JWTPayloadSchema } from "../modules/auth/schema";
+import { createFactory } from "hono/factory";
+import { JWTPayloadSchema, UserMeResponseSchema } from "../modules/auth/schema";
 import { prisma } from "./prisma";
+import z from "zod";
 
 const tokenSecretKey = String(process.env.JWT_SECRET);
 const ACCESS_TOKEN_EXP = 60 * 60; // 60 minutes
@@ -58,7 +58,16 @@ export async function signRefreshToken(payload: { userId: string; email?: string
   );
 }
 
-export const checkAuthorized = createMiddleware(async (c, next) => {
+export const AuthMiddlewareEnvSchema = z.object({
+  Variables: z.object({
+    user: UserMeResponseSchema,
+  }),
+});
+export type AuthMiddlewareEnv = z.infer<typeof AuthMiddlewareEnvSchema>;
+
+const factory = createFactory<AuthMiddlewareEnv>();
+
+export const checkAuthorized = factory.createMiddleware(async (c, next) => {
   try {
     const authHeader = c.req.header("Authorization");
 
@@ -82,8 +91,8 @@ export const checkAuthorized = createMiddleware(async (c, next) => {
       return c.json({ error: "User not found." }, 401);
     }
 
-    c.set("userId", decodedToken.sub);
-    c.set("email", decodedToken.email);
+    // c.set("userId", decodedToken.sub);
+    // c.set("email", decodedToken.email);
     c.set("user", user);
 
     await next();

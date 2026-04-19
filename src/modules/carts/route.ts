@@ -8,6 +8,12 @@ const tags = ["carts"];
 
 export const cartRoute = new OpenAPIHono();
 
+cartRoute.openAPIRegistry.registerComponent("securitySchemes", "bearerAuth", {
+  type: "http",
+  scheme: "bearer",
+  bearerFormat: "JWT",
+});
+
 // GET /cart/
 cartRoute.openapi(
   createRoute({
