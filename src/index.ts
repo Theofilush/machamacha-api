@@ -1,23 +1,24 @@
+import "dotenv/config";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { Scalar } from "@scalar/hono-api-reference";
-import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { productRoute } from "./modules/products/route";
 import { userRoute } from "./modules/users/route";
-import { auth } from "./lib/auth";
 import { authRoute } from "./modules/auth/route";
 import { betterAuthRoute } from "./modules/auth/better-auth-route";
 import { cartRoute } from "./modules/carts/route";
 
 const app = new OpenAPIHono();
 
-app.use(cors({
-  origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
-  credentials: true,
-  allowHeaders: ["Content-Type", "Authorization", "Cookie"],
-  allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-}));
+app.use(
+  cors({
+    origin: [process.env.WEB_BASE_URL as string],
+    credentials: true,
+    allowHeaders: ["Content-Type", "Authorization", "Cookie"],
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  }),
+);
 app.use(logger());
 
 app.route("/products", productRoute);

@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
   output   = "../src/generated/prisma"
 }
 
@@ -36,17 +36,17 @@ model Product {
 }
 
 model User {
-  id            String    @id @default(ulid())
+  id            String   @id @default(ulid())
   name          String?
-  email         String    @unique
-  emailVerified Boolean   @default(false)
+  email         String   @unique
+  emailVerified Boolean  @default(false)
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
-  
-  sessions      Session[]
-  accounts      Account[]
-  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
+
+  sessions Session[]
+  accounts Account[]
+
   password      Password?
   carts         Cart[]
   refreshTokens RefreshToken[]
@@ -84,14 +84,13 @@ model Account {
 }
 
 model Verification {
-  id         String    @id @default(ulid())
+  id         String   @id @default(ulid())
   identifier String
   value      String
   expiresAt  DateTime
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @default(now()) @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
 }
-
 
 model Password {
   id   String @id @default(ulid())

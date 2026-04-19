@@ -65,6 +65,7 @@ export const AuthMiddlewareEnvSchema = z.object({
     user: UserMeResponseSchema,
   }),
 });
+
 export type AuthMiddlewareEnv = z.infer<typeof AuthMiddlewareEnvSchema>;
 
 const factory = createFactory<AuthMiddlewareEnv>();
@@ -105,8 +106,8 @@ export const checkAuthorized = factory.createMiddleware(async (c, next) => {
 });
 
 export const auth = betterAuth({
-  baseURL: process.env.BASE_URL || "http://localhost:3000",
-  trustedOrigins: ["http://localhost:5173"],
+  baseURL: process.env.BASE_URL as string,
+  trustedOrigins: [process.env.WEB_BASE_URL as string],
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),

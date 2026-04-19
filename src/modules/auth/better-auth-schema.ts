@@ -1,21 +1,30 @@
 import { z } from "@hono/zod-openapi";
 
 export const BetterLoginSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(6),
-}).passthrough();
+});
 
 export const BetterRegisterSchema = z.object({
   name: z.string().min(2),
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(6),
-}).passthrough();
+});
+
+export const BetterSocialLoginSchema = z.object({
+  provider: z.enum(["google"]),
+  callbackURL: z.string().optional(),
+});
+
+export const BetterSocialLoginResponseSchema = z.object({
+  url: z.string(),
+});
 
 export const BetterUserResponseSchema = z.object({
   user: z.object({
     id: z.string(),
     name: z.string(),
-    email: z.string(),
+    email: z.email(),
     emailVerified: z.boolean(),
     createdAt: z.string(),
     updatedAt: z.string(),
