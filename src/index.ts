@@ -8,6 +8,7 @@ import { userRoute } from "./modules/users/route";
 import { authRoute } from "./modules/auth/route";
 import { betterAuthRoute } from "./modules/auth/better-auth-route";
 import { cartRoute } from "./modules/carts/route";
+import { checkoutRoute } from "./modules/checkout/route";
 
 const app = new OpenAPIHono();
 
@@ -26,6 +27,7 @@ app.route("/users", userRoute);
 app.route("/auth", authRoute);
 app.route("/auth", betterAuthRoute);
 app.route("/cart", cartRoute);
+app.route("/checkout", checkoutRoute);
 
 app.doc("/openapi.json", {
   openapi: "3.0.4",

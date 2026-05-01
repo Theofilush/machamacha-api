@@ -14,9 +14,12 @@ export const UserResponseSchema = z.object({
   id: z.string(),
   email: z.email(),
 });
+
 export const UserMeResponseSchema = z.object({
   id: z.string(),
+  name: z.string().nullable(),
   email: z.email(),
+  image: z.string().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });

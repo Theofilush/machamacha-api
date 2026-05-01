@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
@@ -18,6 +18,7 @@ datasource db {
   provider = "postgresql"
 }
 
+
 model Product {
   id          String   @id @default(ulid())
   name        String
@@ -29,7 +30,8 @@ model Product {
   stock       Int      @default(0)
   tags        String[]
 
-  cartItems CartItem[]
+  cartItems  CartItem[]
+  orderItems OrderItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -49,6 +51,7 @@ model User {
 
   password      Password?
   carts         Cart[]
+  orders        Order[]
   refreshTokens RefreshToken[]
 }
 
@@ -140,6 +143,37 @@ model CartItem {
 
   cart   Cart   @relation(fields: [cartId], references: [id])
   cartId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Order {
+  id String @id @default(ulid())
+
+  totalPrice Int
+  status     String @default("PENDING") // PENDING, PAID, FAILED, CANCELLED
+
+  items OrderItem[]
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model OrderItem {
+  id String @id @default(ulid())
+
+  quantity Int
+  price    Int
+
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

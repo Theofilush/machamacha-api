@@ -114,6 +114,7 @@ export const auth = betterAuth({
   basePath: "/auth",
   emailAndPassword: {
     enabled: true,
+    autoSignIn: false,
   },
   socialProviders: {
     google: {
